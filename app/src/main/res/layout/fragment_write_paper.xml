@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/layoutSubject"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toIdeasButton"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/tvInfoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:paddingTop="10dp"
+                android:text="Best way to use this app:"
+                android:textAlignment="center"
+                android:textSize="40sp" />
+
+            <TextView
+                android:id="@+id/tvInfo1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-Finish taking a class, reading a chapter, watching a documentary, taking a workshop, or learning in any way."
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/tvInfo2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-Withing 15 minutes, launch this app and fill out your one minute paper."
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/tvInfo3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-Increase your ability to retrieve the information you just learned."
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/tvInfo4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-Learn more about retrieval learning at http://www.retrievalpractice.org"
+                android:textSize="32sp"
+                android:autoLink="web"/>
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etSubject"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:ems="10"
+            android:hint="What class did you finish?"
+            android:inputType="textCapSentences"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:visibility="visible"
+            android:layout_alignRight="@+id/toIdeasButton"
+            android:layout_alignEnd="@+id/toIdeasButton"
+            android:layout_alignLeft="@+id/toIdeasButton"
+            android:layout_alignStart="@+id/toIdeasButton" />
+
+        <Button
+            android:id="@+id/toIdeasButton"
+            style="@style/main_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etSubject"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/blue_menu_btn"
+            android:text="Begin Paper" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutIdeas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <EditText
+            android:id="@+id/etMainIdeas"
+            android:layout_width="match_parent"
+            android:layout_height="195dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:gravity="top|left"
+            android:hint="What main ideas have you learned in class today?"
+            android:inputType="textCapSentences|textMultiLine"
+            android:textSize="30sp"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/toQuestionsButton"
+            style="@style/main_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etMainIdeas"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/blue_menu_btn"
+            android:text="Next" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutQuestions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <Button
+            android:id="@+id/submitButton"
+            style="@style/main_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etQuestions"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/blue_menu_btn"
+            android:text="Save Paper" />
+
+        <EditText
+            android:id="@+id/etQuestions"
+            android:layout_width="match_parent"
+            android:layout_height="195dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:gravity="top|left"
+            android:hint="What questions do you have after today's lesson?"
+            android:inputType="textCapSentences|textMultiLine"
+            android:textSize="30sp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
