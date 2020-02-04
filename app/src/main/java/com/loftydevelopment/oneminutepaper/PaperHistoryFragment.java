@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,18 +12,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.os.Build.VERSION_CODES.M;
 
-/**
- * Created by connorlof on 5/14/2017.
- */
-
-public class PaperHistoryFragment extends Fragment{
+public class PaperHistoryFragment extends Fragment {
 
     View view;
 
@@ -51,10 +46,8 @@ public class PaperHistoryFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_paper_history, container, false);
 
-        listView = (ListView) view.findViewById(R.id.paperArchiveList);
-
+        listView = view.findViewById(R.id.paperArchiveList);
         arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, titles);
-
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
@@ -67,13 +60,11 @@ public class PaperHistoryFragment extends Fragment{
                 intent.putExtra("mainIdeas", mainIdeas.get(i));
                 intent.putExtra("questions", questions.get(i));
 
-
                 startActivity(intent);
 
             }
         });
 
-        //For deleting entries
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -89,7 +80,6 @@ public class PaperHistoryFragment extends Fragment{
                             public void onClick(DialogInterface dialogInterface, int i) {
 
                                 int idToDelete = idList.get(itemToDelete);
-
                                 paperDatabase.execSQL("DELETE FROM papers WHERE id = " + idToDelete);
 
                                 updateListView();
@@ -105,16 +95,10 @@ public class PaperHistoryFragment extends Fragment{
         try{
 
             paperDatabase = getActivity().openOrCreateDatabase("Papers", MODE_PRIVATE, null);
-
             paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
 
-            //paperDatabase.execSQL("INSERT INTO papers (subject, mainideas, questions) VALUES ('Physics 3/14/17', 'Center of mass', 'Is the center of mass only good for constant velocity?')");
-
-
         }catch(Exception e){
-
             e.printStackTrace();
-
         }
 
         updateListView();
@@ -137,7 +121,6 @@ public class PaperHistoryFragment extends Fragment{
         questions.clear();
         idList.clear();
 
-        //Display newest first
         if(c.moveToLast()){
             do {
 
@@ -147,9 +130,6 @@ public class PaperHistoryFragment extends Fragment{
                 idList.add(c.getInt(idIndex));
 
             } while(c.moveToPrevious());
-
-            Log.i("Titles List", titles.toString());
-
         }
 
         arrayAdapter.notifyDataSetChanged();

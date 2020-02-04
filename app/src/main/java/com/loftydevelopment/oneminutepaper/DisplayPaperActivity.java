@@ -3,13 +3,12 @@ package com.loftydevelopment.oneminutepaper;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
-import static java.security.AccessController.getContext;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class DisplayPaperActivity extends AppCompatActivity {
 
@@ -24,9 +23,9 @@ public class DisplayPaperActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        tvSubject = (TextView) findViewById(R.id.textViewSubject);
-        tvMainIdeas = (TextView) findViewById(R.id.textViewMainIdeas);
-        tvQuestions = (TextView) findViewById(R.id.textViewQuestions);
+        tvSubject = findViewById(R.id.textViewSubject);
+        tvMainIdeas = findViewById(R.id.textViewMainIdeas);
+        tvQuestions = findViewById(R.id.textViewQuestions);
 
         String editedTitle = intent.getStringExtra("titles");
         editedTitle = editedTitle.replace("(", "\n");
