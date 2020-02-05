@@ -92,7 +92,7 @@
         android:layout_height="match_parent"
         android:visibility="invisible">
 
-        <EditText
+        <com.loftydevelopment.oneminutepaper.util.LinedEditText
             android:id="@+id/etMainIdeas"
             android:layout_width="match_parent"
             android:layout_height="195dp"
@@ -103,7 +103,7 @@
             android:gravity="top|left"
             android:hint="What main ideas have you learned in class today?"
             android:inputType="textCapSentences|textMultiLine"
-            android:textSize="30sp"
+            android:textSize="23sp"
             android:visibility="visible" />
 
         <Button
@@ -133,7 +133,7 @@
             android:background="@drawable/blue_menu_btn"
             android:text="Save Paper" />
 
-        <EditText
+        <com.loftydevelopment.oneminutepaper.util.LinedEditText
             android:id="@+id/etQuestions"
             android:layout_width="match_parent"
             android:layout_height="195dp"
@@ -144,7 +144,7 @@
             android:gravity="top|left"
             android:hint="What questions do you have after today's lesson?"
             android:inputType="textCapSentences|textMultiLine"
-            android:textSize="30sp"
+            android:textSize="23sp"
             android:visibility="visible" />
 
     </RelativeLayout>
