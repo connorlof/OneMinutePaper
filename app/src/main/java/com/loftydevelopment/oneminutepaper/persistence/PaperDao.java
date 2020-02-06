@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface PaperDao {
 
-    @Query("SELECT * FROM PAPER ORDER BY ID")
+    @Query("SELECT * FROM paper ORDER BY ID")
     List<Paper> loadAllPapers();
 
     @Insert
@@ -23,8 +23,11 @@ public interface PaperDao {
     void updatePaper(Paper paper);
 
     @Delete
-    void delete(Paper paper);
+    void deletePaper(Paper paper);
 
-    @Query("SELECT * FROM PAPER WHERE id = :id")
+    @Query("SELECT * FROM paper WHERE id = :id")
     Paper loadPaperById(int id);
+
+    @Query("DELETE FROM paper")
+    void deleteAllPapers();
 }

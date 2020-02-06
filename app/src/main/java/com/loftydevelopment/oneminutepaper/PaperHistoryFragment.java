@@ -1,11 +1,9 @@
 package com.loftydevelopment.oneminutepaper;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,26 +12,25 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.loftydevelopment.oneminutepaper.adapters.PaperAdapter;
+import com.loftydevelopment.oneminutepaper.model.Paper;
+import com.loftydevelopment.oneminutepaper.persistence.PaperDatabase;
+import com.loftydevelopment.oneminutepaper.util.AppExecutors;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class PaperHistoryFragment extends Fragment {
 
-    View view;
+    private List<Paper> savedPapers = new ArrayList<>();
+    private ArrayAdapter arrayAdapter;
 
-    ArrayList<String> titles = new ArrayList<>();
-    ArrayList<String> mainIdeas = new ArrayList<>();
-    ArrayList<String> questions = new ArrayList<>();
-    ArrayList<Integer> idList = new ArrayList<>();
-    ArrayAdapter arrayAdapter;
-    ListView listView;
-
-    SQLiteDatabase paperDatabase;
-
+    private PaperDatabase paperRoomDatabase;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -44,62 +41,52 @@ public class PaperHistoryFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_paper_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_paper_history, container, false);
 
-        listView = view.findViewById(R.id.paperArchiveList);
-        arrayAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, titles);
+        paperRoomDatabase = PaperDatabase.getInstance(getContext());
+
+        ListView listView = view.findViewById(R.id.paperArchiveList);
+        arrayAdapter = new PaperAdapter(getContext(), android.R.layout.simple_list_item_1, savedPapers);
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 Intent intent = new Intent(getContext(), DisplayPaperActivity.class);
-                intent.putExtra("titles", titles.get(i));
-                intent.putExtra("mainIdeas", mainIdeas.get(i));
-                intent.putExtra("questions", questions.get(i));
-
+                intent.putExtra("titles", savedPapers.get(i).getSubject());
+                intent.putExtra("mainIdeas", savedPapers.get(i).getMainIdeas());
+                intent.putExtra("questions", savedPapers.get(i).getQuestions());
                 startActivity(intent);
-
             }
         });
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final Paper paperToDelete = savedPapers.get(i);
 
-                final int itemToDelete = i;
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        paperRoomDatabase.paperDao().deletePaper(paperToDelete);
+                    }
+                });
 
-                new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this paper?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                updateListView();
 
-                                int idToDelete = idList.get(itemToDelete);
-                                paperDatabase.execSQL("DELETE FROM papers WHERE id = " + idToDelete);
-
-                                updateListView();
-
-                            }
-                        }).setNegativeButton("No", null)
-                        .show();
+                Snackbar.make(view, "Your paper was deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            paperRoomDatabase.paperDao().insertPaper(paperToDelete);
+                            updateListView();
+                        }
+                }).show();
 
                 return true;
             }
         });
-
-        try{
-
-            paperDatabase = getActivity().openOrCreateDatabase("Papers", MODE_PRIVATE, null);
-            paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
 
         updateListView();
 
@@ -109,30 +96,19 @@ public class PaperHistoryFragment extends Fragment {
 
     public void updateListView(){
 
-        Cursor c = paperDatabase.rawQuery("SELECT * FROM papers", null);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                savedPapers = paperRoomDatabase.paperDao().loadAllPapers();
 
-        int subjectIndex = c.getColumnIndex("subject");
-        int mainideasIndex = c.getColumnIndex("mainideas");
-        int questionsIndex = c.getColumnIndex("questions");
-        int idIndex = c.getColumnIndex("id");
-
-        titles.clear();
-        mainIdeas.clear();
-        questions.clear();
-        idList.clear();
-
-        if(c.moveToLast()){
-            do {
-
-                titles.add(c.getString(subjectIndex));
-                mainIdeas.add(c.getString(mainideasIndex));
-                questions.add(c.getString(questionsIndex));
-                idList.add(c.getInt(idIndex));
-
-            } while(c.moveToPrevious());
-        }
-
-        arrayAdapter.notifyDataSetChanged();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
 
     }
 

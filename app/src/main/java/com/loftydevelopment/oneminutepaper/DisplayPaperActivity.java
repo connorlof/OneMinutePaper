@@ -48,7 +48,7 @@ public class DisplayPaperActivity extends AppCompatActivity {
 
     public void backOnClick(View view){
 
-        Intent intent = new Intent(getApplicationContext(), MainActivityFragment.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
         int page = 1;
         intent.putExtra("One", page);// One is your argument

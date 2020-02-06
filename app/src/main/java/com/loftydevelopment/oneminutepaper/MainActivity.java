@@ -20,8 +20,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.loftydevelopment.oneminutepaper.persistence.PaperDatabase;
 
-public class MainActivityFragment extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     PaperHistoryFragment tab2;
     WritePaperFragment tab1;
@@ -30,28 +31,30 @@ public class MainActivityFragment extends AppCompatActivity {
     private ViewPager mViewPager;
 
     SQLiteDatabase paperDatabase;
+    private PaperDatabase paperDatabaseRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_fragment);
+        setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        //todo: copy old database to room if it exists and is not empty
         try{
 
             paperDatabase = this.openOrCreateDatabase("Papers", MODE_PRIVATE, null);
-            paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
+            //paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
 
         }catch(Exception e){
             e.printStackTrace();

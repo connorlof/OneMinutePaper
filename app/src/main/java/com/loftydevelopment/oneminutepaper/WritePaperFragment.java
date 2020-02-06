@@ -13,10 +13,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.loftydevelopment.oneminutepaper.model.Paper;
+import com.loftydevelopment.oneminutepaper.persistence.PaperDatabase;
+import com.loftydevelopment.oneminutepaper.util.AppExecutors;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,15 +29,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class WritePaperFragment extends Fragment implements View.OnClickListener{
 
-    EditText editTextSubject, editTextMainIdeas, editTextQuestions;
-    RelativeLayout layoutSubject, layoutIdeas, layoutQuestions;
-    String subjectStr, mainIdeasStr, questionsStr;
-    TextView tvInfoTitle, tvInfo1, tvInfo2, tvInfo3, tvInfo4;
+    private EditText editTextSubject, editTextMainIdeas, editTextQuestions;
+    private RelativeLayout layoutSubject, layoutIdeas, layoutQuestions;
+    private SQLiteDatabase paperDatabase;
+    private PaperDatabase paperRoomDatabase;
 
-
-    SQLiteDatabase paperDatabase;
-
-    View view;
+    private View view;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -43,9 +44,12 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
         view = inflater.inflate(R.layout.fragment_write_paper, container, false);
+        initializeWidgets();
+        return view;
+    }
 
+    private void initializeWidgets() {
         layoutSubject =  view.findViewById(R.id.layoutSubject);
         layoutIdeas = view.findViewById(R.id.layoutIdeas);
         layoutQuestions = view.findViewById(R.id.layoutQuestions);
@@ -65,11 +69,11 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
         editTextQuestions.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editTextQuestions.setRawInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
 
-        tvInfoTitle = view.findViewById(R.id.tvInfoTitle);
-        tvInfo1 = view.findViewById(R.id.tvInfo1);
-        tvInfo2 = view.findViewById(R.id.tvInfo2);
-        tvInfo3 = view.findViewById(R.id.tvInfo3);
-        tvInfo4 = view.findViewById(R.id.tvInfo4);
+        TextView tvInfoTitle = view.findViewById(R.id.tvInfoTitle);
+        TextView tvInfo1 = view.findViewById(R.id.tvInfo1);
+        TextView tvInfo2 = view.findViewById(R.id.tvInfo2);
+        TextView tvInfo3 = view.findViewById(R.id.tvInfo3);
+        TextView tvInfo4 = view.findViewById(R.id.tvInfo4);
 
         tvInfoTitle.setTypeface(font);
         tvInfo1.setTypeface(font);
@@ -80,11 +84,10 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
         Button b1 = view.findViewById(R.id.toIdeasButton);
         Button b2 = view.findViewById(R.id.toQuestionsButton);
         Button b3 = view.findViewById(R.id.submitButton);
+
         b1.setOnClickListener(this);
         b2.setOnClickListener(this);
         b3.setOnClickListener(this);
-
-        return view;
     }
 
     @Override
@@ -92,30 +95,30 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
 
         switch(v.getId()) {
             case R.id.toIdeasButton:
-                subjectStr = String.valueOf(editTextSubject.getText());
+                String subjectStr = editTextSubject.getText().toString().trim();
 
-                if(subjectStr == null || subjectStr.equals("")){
-                    Toast.makeText(getContext(), "You forgot to enter a class!", Toast.LENGTH_SHORT).show();
+                if(subjectStr.equals("")){
+                    Snackbar.make(view, "You forgot to enter a class!", Snackbar.LENGTH_SHORT).show();
                 }else{
                     layoutIdeas.setVisibility(View.VISIBLE);
                     layoutSubject.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.toQuestionsButton:
-                mainIdeasStr = String.valueOf(editTextMainIdeas.getText());
+                String mainIdeasStr = editTextMainIdeas.getText().toString().trim();
 
-                if(mainIdeasStr == null || mainIdeasStr.equals("")){
-                    Toast.makeText(getContext(), "You didn't enter any main ideas!", Toast.LENGTH_SHORT).show();
+                if(mainIdeasStr.equals("")){
+                    Snackbar.make(view, "You didn't enter any main ideas!", Snackbar.LENGTH_SHORT).show();
                 }else{
                     layoutQuestions.setVisibility(View.VISIBLE);
                     layoutIdeas.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.submitButton:
-                questionsStr = String.valueOf(editTextQuestions.getText());
+                String questionsStr = editTextQuestions.getText().toString().trim();
 
-                if(questionsStr == null || questionsStr.equals("")){
-                    Toast.makeText(getContext(), "You didn't enter any questions!", Toast.LENGTH_SHORT).show();
+                if(questionsStr.equals("")){
+                    Snackbar.make(view, "You didn't enter any questions!", Snackbar.LENGTH_SHORT).show();
                 }else{
                     //Get current date
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
@@ -125,17 +128,16 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
                     mainIdeasStr = String.valueOf(editTextMainIdeas.getText());
                     questionsStr = String.valueOf(editTextQuestions.getText());
 
-                    try{
+                    final Paper paper = new Paper(subjectStr, mainIdeasStr, questionsStr);
 
-                        paperDatabase = getActivity().openOrCreateDatabase("Papers", MODE_PRIVATE, null);
-                        paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR)");
-                        paperDatabase.execSQL("INSERT INTO papers (subject, mainideas, questions) VALUES (?, ?, ?)", new String[] { subjectStr, mainIdeasStr, questionsStr});
+                    paperRoomDatabase = PaperDatabase.getInstance(getContext());
 
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-
-                    Toast.makeText(getContext(), "Paper saved!", Toast.LENGTH_SHORT).show();
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            paperRoomDatabase.paperDao().insertPaper(paper);
+                        }
+                    });
 
                     Intent intent = new Intent(getContext(), DisplayPaperActivity.class);
                     intent.putExtra("titles", subjectStr);

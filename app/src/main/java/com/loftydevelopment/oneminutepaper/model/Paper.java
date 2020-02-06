@@ -1,31 +1,23 @@
 package com.loftydevelopment.oneminutepaper.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "paper")
 public class Paper {
 
     @PrimaryKey(autoGenerate = true)
-    int id;
-    String subject;
-    String date;
-    String mainIdeas;
-    String questions;
+    private int id;
+    @ColumnInfo(name = "subject")
+    private String subject;
+    @ColumnInfo(name = "main_ideas")
+    private String mainIdeas;
+    @ColumnInfo(name = "questions")
+    private String questions;
 
-    @Ignore
-    public Paper(String subject, String date, String mainIdeas, String questions) {
+    public Paper(String subject, String mainIdeas, String questions) {
         this.subject = subject;
-        this.date = date;
-        this.mainIdeas = mainIdeas;
-        this.questions = questions;
-    }
-
-    public Paper(int id, String subject, String date, String mainIdeas, String questions) {
-        this.id = id;
-        this.subject = subject;
-        this.date = date;
         this.mainIdeas = mainIdeas;
         this.questions = questions;
     }
@@ -44,14 +36,6 @@ public class Paper {
 
     public void setSubject(String subject) {
         this.subject = subject;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public String getMainIdeas() {
@@ -75,7 +59,6 @@ public class Paper {
         return "Paper{" +
                 "id=" + id +
                 ", subject='" + subject + '\'' +
-                ", date='" + date + '\'' +
                 ", mainIdeas='" + mainIdeas + '\'' +
                 ", questions='" + questions + '\'' +
                 '}';
