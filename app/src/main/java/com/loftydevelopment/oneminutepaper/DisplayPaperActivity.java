@@ -35,7 +35,7 @@ public class DisplayPaperActivity extends AppCompatActivity {
         tvMainIdeas.setText(intent.getStringExtra("mainIdeas"));
         tvQuestions.setText(intent.getStringExtra("questions"));
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "DansHandWriting.ttf");
+        Typeface font = Typeface.createFromAsset(getAssets(), "PatrickHand-Regular.ttf");
         tvSubject.setTypeface(font);
         tvMainIdeas.setTypeface(font);
         tvQuestions.setTypeface(font);

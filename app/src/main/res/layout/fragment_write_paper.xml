@@ -25,35 +25,35 @@
                 android:paddingTop="10dp"
                 android:text="Best way to use this app:"
                 android:textAlignment="center"
-                android:textSize="40sp" />
+                android:textSize="30sp" />
 
             <TextView
                 android:id="@+id/tvInfo1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="-Finish taking a class, reading a chapter, watching a documentary, taking a workshop, or learning in any way."
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvInfo2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="-Within 15 minutes, launch this app and fill out your one minute paper."
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvInfo3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="-Increase your ability to retrieve the information you just learned."
-                android:textSize="32sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvInfo4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="-Learn more about retrieval learning at http://www.retrievalpractice.org"
-                android:textSize="32sp"
+                android:textSize="24sp"
                 android:autoLink="web"/>
 
         </LinearLayout>
@@ -61,14 +61,14 @@
         <EditText
             android:id="@+id/etSubject"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:ems="10"
             android:hint="What class did you finish?"
             android:inputType="textCapSentences"
             android:textAlignment="center"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:visibility="visible"
             android:layout_alignRight="@+id/toIdeasButton"
             android:layout_alignEnd="@+id/toIdeasButton"

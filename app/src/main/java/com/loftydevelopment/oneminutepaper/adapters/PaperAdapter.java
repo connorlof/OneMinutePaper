@@ -1,6 +1,7 @@
 package com.loftydevelopment.oneminutepaper.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,13 @@ public class PaperAdapter extends  RecyclerView.Adapter<PaperAdapter.ViewHolder>
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private View.OnLongClickListener mLongClickListener;
+    private Context context;
 
     // data is passed into the constructor
     public PaperAdapter(Context context, List<String> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.context = context;
     }
 
     // inflates the row layout from xml when needed
@@ -55,6 +58,9 @@ public class PaperAdapter extends  RecyclerView.Adapter<PaperAdapter.ViewHolder>
             super(itemView);
             myTextView = itemView.findViewById(R.id.tvAnimalName);
             itemView.setOnClickListener(this);
+
+            Typeface font = Typeface.createFromAsset(context.getAssets(), "PatrickHand-Regular.ttf");
+            myTextView.setTypeface(font);
         }
 
         @Override

@@ -57,7 +57,7 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
         editTextMainIdeas = view.findViewById(R.id.etMainIdeas);
         editTextQuestions = view.findViewById(R.id.etQuestions);
 
-        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "DansHandWriting.ttf");
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "PatrickHand-Regular.ttf");
         editTextSubject.setTypeface(font);
         editTextMainIdeas.setTypeface(font);
         editTextQuestions.setTypeface(font);
