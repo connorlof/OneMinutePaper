@@ -1,6 +1,7 @@
 package com.loftydevelopment.oneminutepaper;
 
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import android.os.Bundle;
@@ -20,7 +21,10 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.loftydevelopment.oneminutepaper.model.Paper;
 import com.loftydevelopment.oneminutepaper.persistence.PaperDatabase;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-
-    SQLiteDatabase paperDatabase;
-    private PaperDatabase paperDatabaseRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +51,17 @@ public class MainActivity extends AppCompatActivity {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //todo: copy old database to room if it exists and is not empty
-        try{
-
-            paperDatabase = this.openOrCreateDatabase("Papers", MODE_PRIVATE, null);
-            //paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         int defaultValue = 0;
         int page = getIntent().getIntExtra("One", defaultValue);
         mViewPager.setCurrentItem(page);
+
+        try{
+            migrateOldDatabase();
+        }catch (Exception e){
+            //do nothing, no old database records to migrate
+        }
 
     }
 
@@ -148,6 +145,36 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    private void migrateOldDatabase() {
+        ArrayList<Paper> paperList = new ArrayList<>();
+
+        PaperDatabase paperDatabaseRoom = PaperDatabase.getInstance(this);
+        SQLiteDatabase paperDatabase = this.openOrCreateDatabase("Papers", MODE_PRIVATE, null);
+        paperDatabase.execSQL("CREATE TABLE IF NOT EXISTS papers (subject VARCHAR, mainideas VARCHAR, questions VARCHAR, id INTEGER PRIMARY KEY)");
+
+        Cursor c = paperDatabase.rawQuery("SELECT * FROM papers", null);
+
+        int subjectIndex = c.getColumnIndex("subject");
+        int mainideasIndex = c.getColumnIndex("mainideas");
+        int questionsIndex = c.getColumnIndex("questions");
+
+        if(c.moveToLast()){
+            do {
+                paperList.add(new Paper(c.getString(subjectIndex), c.getString(mainideasIndex), c.getString(questionsIndex)));
+            } while(c.moveToPrevious());
+        }
+
+        //Check if any papers exist in the old database
+        if(paperList.size() > 0) {
+            for(Paper paper : paperList) {
+                paperDatabaseRoom.paperDao().insertPaper(paper);
+            }
+
+            paperDatabase.execSQL("DELETE FROM papers");
+        }
+
     }
 
 }

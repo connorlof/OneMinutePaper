@@ -31,7 +31,6 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
 
     private EditText editTextSubject, editTextMainIdeas, editTextQuestions;
     private RelativeLayout layoutSubject, layoutIdeas, layoutQuestions;
-    private SQLiteDatabase paperDatabase;
     private PaperDatabase paperRoomDatabase;
 
     private View view;
