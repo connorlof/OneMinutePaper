@@ -1,100 +1,97 @@
 package com.loftydevelopment.oneminutepaper.adapters;
 
-import android.content.Context;
-import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.loftydevelopment.oneminutepaper.R;
+import com.loftydevelopment.oneminutepaper.model.Paper;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PaperAdapter extends  RecyclerView.Adapter<PaperAdapter.ViewHolder>  {
+public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.ViewHolder>  {
 
-    private List<String> mData;
-    private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
-    private View.OnLongClickListener mLongClickListener;
-    private Context context;
+    private static final String TAG = "PaperAdapter";
+    private List<Paper> paperList = new ArrayList<>();
+    private OnPaperListener onPaperListener;
 
-    // data is passed into the constructor
-    public PaperAdapter(Context context, List<String> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-        this.context = context;
+    public PaperAdapter(OnPaperListener onPaperListener) {
+        this.onPaperListener = onPaperListener;
     }
 
-    // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.row_reyclerview_paper, parent, false);
-        return new ViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_reyclerview_paper, parent, false);
+        return new ViewHolder(view, onPaperListener);
     }
 
-    // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
-        holder.myTextView.setText(animal);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        try{
+            ((ViewHolder)holder).title.setText(paperList.get(position).getSubject());
+        }catch (NullPointerException e){
+            Log.e(TAG, "onBindViewHolder: Null Pointer: " + e.getMessage() );
+        }
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        return paperList.size();
     }
 
+    public Paper getPaper(int position){
+        if(paperList.size() > 0){
+            return paperList.get(position);
+        }
+        return null;
+    }
 
-    // stores and recycles views as they are scrolled off screen
+    public void removePaper(Paper note){
+        paperList.remove(note);
+        notifyDataSetChanged();
+    }
+
+    public void setPapers(List<Paper> notes){
+        this.paperList = notes;
+        notifyDataSetChanged();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView myTextView;
 
-        ViewHolder(View itemView) {
+        TextView title;
+        OnPaperListener mOnPaperListener;
+
+        public ViewHolder(View itemView, OnPaperListener onPaperListener) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.tvAnimalName);
-            itemView.setOnClickListener(this);
+            title = itemView.findViewById(R.id.tv_paper_title);
+            mOnPaperListener = onPaperListener;
 
-            Typeface font = Typeface.createFromAsset(context.getAssets(), "PatrickHand-Regular.ttf");
-            myTextView.setTypeface(font);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            Log.d(TAG, "onClick: " + getAdapterPosition());
+            mOnPaperListener.onPaperClick(getPaper(getAdapterPosition()));
         }
 
-        public boolean onLongClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-            return true;
+        @Override
+        public boolean onLongClick(View v) {
+            Log.d(TAG, "onLongClick: " + getAdapterPosition());
+            mOnPaperListener.onPaperLongClick(getPaper(getAdapterPosition()));
+            return false;
         }
-
     }
 
-    // convenience method for getting data at click position
-    String getItem(int id) {
-        return mData.get(id);
-    }
-
-    // allows clicks events to be caught
-    void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
-
-    void setLongClickListener(View.OnLongClickListener itemLongClickListener) {
-        this.mLongClickListener = itemLongClickListener;
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public interface OnItemLongClickListener {
-        public boolean onItemLongClicked(int position);
+    public interface OnPaperListener{
+        void onPaperClick(Paper paper);
+        void onPaperLongClick(Paper paper);
     }
 }
