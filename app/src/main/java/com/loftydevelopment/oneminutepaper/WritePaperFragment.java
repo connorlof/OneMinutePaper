@@ -71,13 +71,11 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
         TextView tvInfoTitle = view.findViewById(R.id.tvInfoTitle);
         TextView tvInfo1 = view.findViewById(R.id.tvInfo1);
         TextView tvInfo2 = view.findViewById(R.id.tvInfo2);
-        TextView tvInfo3 = view.findViewById(R.id.tvInfo3);
         TextView tvInfo4 = view.findViewById(R.id.tvInfo4);
 
         tvInfoTitle.setTypeface(font);
         tvInfo1.setTypeface(font);
         tvInfo2.setTypeface(font);
-        tvInfo3.setTypeface(font);
         tvInfo4.setTypeface(font);
 
         Button b1 = view.findViewById(R.id.toIdeasButton);

@@ -23,37 +23,46 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:paddingTop="10dp"
-                android:text="Best way to use this app:"
+                android:text="This app is best used after:"
                 android:textAlignment="center"
-                android:textSize="30sp" />
+                android:textSize="28sp" />
 
             <TextView
                 android:id="@+id/tvInfo1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="-Finish taking a class, reading a chapter, watching a documentary, taking a workshop, or learning in any way."
-                android:textSize="24sp" />
+                android:textAlignment="center"
+                android:text="Taking a class, reading a chapter, watching a documentary, taking a workshop, or learning in any way."
+                android:textSize="20sp" />
+            <TextView
+                android:id="@+id/tvEmpty1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tvInfo2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="-Within 15 minutes, launch this app and fill out your one minute paper."
-                android:textSize="24sp" />
+                android:textAlignment="center"
+                android:text="Within 15 minutes, launch this app and fill out your one minute paper. This simple exercise has been seen to increase recall of the material learned."
+                android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/tvInfo3"
+                android:id="@+id/tvEmpty2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="-Increase your ability to retrieve the information you just learned."
-                android:textSize="24sp" />
+                android:text=""
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tvInfo4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="-Learn more about retrieval learning at http://www.retrievalpractice.org"
-                android:textSize="24sp"
+                android:textAlignment="center"
+                android:text="More information about retrieval learning is available at http://www.retrievalpractice.org"
+                android:textSize="20sp"
                 android:autoLink="web"/>
 
         </LinearLayout>
