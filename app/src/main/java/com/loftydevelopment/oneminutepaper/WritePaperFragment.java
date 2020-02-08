@@ -136,6 +136,14 @@ public class WritePaperFragment extends Fragment implements View.OnClickListener
                         }
                     });
 
+                    layoutQuestions.setVisibility(View.INVISIBLE);
+                    layoutIdeas.setVisibility(View.INVISIBLE);
+                    layoutSubject.setVisibility(View.VISIBLE);
+
+                    editTextSubject.setText("");
+                    editTextMainIdeas.setText("");
+                    editTextQuestions.setText("");
+
                     Intent intent = new Intent(getContext(), DisplayPaperActivity.class);
                     intent.putExtra("titles", subjectStr);
                     intent.putExtra("mainIdeas", mainIdeasStr);

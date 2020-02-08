@@ -5,10 +5,12 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class DisplayPaperActivity extends AppCompatActivity {
 
@@ -20,6 +22,11 @@ public class DisplayPaperActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_paper);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         Intent intent = getIntent();
 
@@ -47,13 +54,16 @@ public class DisplayPaperActivity extends AppCompatActivity {
     }
 
     public void backOnClick(View view){
+        finish();
+    }
 
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
 
-        int page = 1;
-        intent.putExtra("One", page);// One is your argument
-
-        startActivity(intent);
-
+        return super.onOptionsItemSelected(item);
     }
 }
