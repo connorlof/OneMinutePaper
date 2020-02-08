@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,6 +47,7 @@ public class PaperHistoryFragment extends Fragment implements PaperAdapter.OnPap
         RecyclerView recyclerView = view.findViewById(R.id.rv_papers);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         paperAdapter = new PaperAdapter(this);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(paperAdapter);
 
         updateListView();
@@ -60,7 +63,14 @@ public class PaperHistoryFragment extends Fragment implements PaperAdapter.OnPap
             public void run() {
                 savedPapers = paperRoomDatabase.paperDao().loadAllPapers();
                 Collections.reverse(savedPapers);
-                paperAdapter.setPapers(savedPapers);
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        paperAdapter.setPapers(savedPapers);
+                    }
+                });
+
             }
         });
     }
@@ -76,26 +86,42 @@ public class PaperHistoryFragment extends Fragment implements PaperAdapter.OnPap
         startActivity(intent);
     }
 
-    @Override
-    public void onPaperLongClick(Paper paper) {
-        final Paper paperToDelete = paper;
-
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                paperRoomDatabase.paperDao().deletePaper(paperToDelete);
-            }
-        });
-
-        updateListView();
-
-        Snackbar.make(view, "Your paper was deleted", Snackbar.LENGTH_LONG)
-                .setAction("Undo", new View.OnClickListener() {
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback =
+            new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
                 @Override
-                public void onClick(View v) {
-                    paperRoomDatabase.paperDao().insertPaper(paperToDelete);
-                    updateListView();
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                    return false;
                 }
-        }).show();
-    }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                    final Paper paper = paperAdapter.getPaper(viewHolder.getAdapterPosition());
+                    paperAdapter.removePaper(paper);
+
+                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            paperRoomDatabase.paperDao().deletePaper(paper);
+                        }
+                    });
+
+                    updateListView();
+
+                    Snackbar.make(view, "Your paper was deleted", Snackbar.LENGTH_LONG)
+                            .setAction("Undo", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            paperRoomDatabase.paperDao().insertPaper(paper);
+                                        }
+                                    });
+                                    updateListView();
+                                }
+                            }).show();
+
+                }
+            };
+
 }

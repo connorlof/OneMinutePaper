@@ -63,7 +63,7 @@ public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView title;
         OnPaperListener mOnPaperListener;
@@ -82,16 +82,9 @@ public class PaperAdapter extends RecyclerView.Adapter<PaperAdapter.ViewHolder> 
             mOnPaperListener.onPaperClick(getPaper(getAdapterPosition()));
         }
 
-        @Override
-        public boolean onLongClick(View v) {
-            Log.d(TAG, "onLongClick: " + getAdapterPosition());
-            mOnPaperListener.onPaperLongClick(getPaper(getAdapterPosition()));
-            return false;
-        }
     }
 
     public interface OnPaperListener{
         void onPaperClick(Paper paper);
-        void onPaperLongClick(Paper paper);
     }
 }
